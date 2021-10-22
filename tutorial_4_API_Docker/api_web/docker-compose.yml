@@ -1,0 +1,15 @@
+version: '3.6'
+
+services:
+  api_web:
+    build:
+      context: .
+      args:
+        - DATABASE_IP=$DATABASE_IP
+    ports:
+    - "12333:12333"
+    volumes:
+    - /nfs:/nfs:shared
+    container_name: api_web
+    network_mode: "default"
+    restart: 'always'

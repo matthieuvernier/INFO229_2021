@@ -1,0 +1,23 @@
+version: '3.6'
+services:
+  database:
+    image: mariadb:10.1.48
+    ports:
+      - "13306:3306"
+    container_name: database
+    network_mode: "default"
+    environment:
+        MYSQL_ROOT_PASSWORD: "root"
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    volumes:
+      - ./local_db:/var/lib/mysql
+    restart: 'always'
+  
+  create_database:
+    build:
+      context: ./create_database
+      args:
+        - DATABASE_IP=$DATABASE_IP 
+    network_mode: "default"
