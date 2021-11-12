@@ -1,0 +1,32 @@
+version: '3.6'
+
+services:
+    discord_listener:
+        build:
+            context: discord_listener/
+        container_name: discord_listener
+        network_mode: "default"
+        restart: 'always'
+        
+    birthday_database:
+        image: mariadb:10.1.48
+        ports:
+          - "23306:3306"
+        container_name: birthday_database
+        network_mode: "default"
+        environment:
+            MYSQL_ROOT_PASSWORD: "root"
+        command:
+          - "--character-set-server=utf8mb4"
+          - "--collation-server=utf8mb4_unicode_ci"
+        volumes:
+          - ./birthday_database:/var/lib/mysql
+        restart: 'always'
+
+    birthday_manager:
+        build:
+          context: ./birthday_manager
+          args:
+            - DATABASE_IP=$DATABASE_IP 
+        container_name: birthday_manager
+        network_mode: "default"
