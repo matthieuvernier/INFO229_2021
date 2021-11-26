@@ -5,7 +5,10 @@ services:
         build:
             context: discord_listener/
         container_name: discord_listener
-        network_mode: "default"
+        networks:
+          - network
+        environment:
+          - RABBITMQ_HOST=rabbitmq
         restart: 'always'
         
     birthday_database:
@@ -13,7 +16,8 @@ services:
         ports:
           - "23306:3306"
         container_name: birthday_database
-        network_mode: "default"
+        networks:
+          - network
         environment:
             MYSQL_ROOT_PASSWORD: "root"
         command:
@@ -29,4 +33,23 @@ services:
           args:
             - DATABASE_IP=$DATABASE_IP 
         container_name: birthday_manager
-        network_mode: "default"
+        environment:
+          - RABBITMQ_HOST=rabbitmq
+        networks: 
+          - network
+        #network_mode: "default"
+
+    rabbitmq:
+        image: rabbitmq:3-management
+        ports:
+          # The standard AMQP protocol port
+          - '5672:5672'
+          # HTTP management UI
+          - '15672:15672'
+        networks: 
+          - network
+        container_name: rabbitmq
+        restart: 'always'
+
+networks:
+  network: {}
